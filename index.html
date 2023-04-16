@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Registration Form</title>
+    <!-- Include Tailwind CSS -->
+    <link href="https://unpkg.com/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+
+<div class="container mx-auto py-8">
+    <h1 class="text-2xl font-bold mb-4">User Registration Form</h1>
+
+    <!-- User registration form -->
+    <form id="userForm" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <div class="mb-4">
+            <label class="block text-gray-700 font-bold mb-2" for="firstName">
+                First Name
+            </label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="firstName" type="text" placeholder="First Name">
+        </div>
+        <div class="mb-4">
+            <label class="block text-gray-700 font-bold mb-2" for="lastName">
+                Last Name
+            </label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="lastName" type="text" placeholder="Last Name">
+        </div>
+        <div class="mb-4">
+            <label class="block text-gray-700 font-bold mb-2" for="email">
+                Email
+            </label>
+            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" placeholder="Email">
+        </div>
+        <div class="flex items-center justify-between">
+            <button id="registerBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="button">
+                Register
+            </button>
+        </div>
+    </form>
+
+    <!-- User table -->
+    <table class="table-auto w-full">
+        <thead>
+        <tr>
+            <th class="px-4 py-2">First Name</th>
+            <th class="px-4 py-2">Last Name</th>
+            <th class="px-4 py-2">Email</th>
+            <th class="px-4 py-2">Actions</th>
+        </tr>
+        </thead>
+        <tbody id="userTableBody">
+        </tbody>
+    </table>
+</div>
+
+<!-- Include JavaScript -->
+<script>
+    const userForm = document.getElementById('userForm');
+    const userTableBody = document.getElementById('userTableBody');
+
+    // Add an event listener for the register button
+    const registerBtn = document.getElementById('registerBtn');
+    registerBtn.addEventListener('click', () => {
+        // Get the form values
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+        const email = document.getElementById('email').value;
+
+        // Create a new user object
+        const user = {
+            firstName,
+            lastName,
+            email
+        };
+
+        // Get the existing users from local storage or create an empty array
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+
+        // Add the new user to
+        users.push(user);
+
+// Save the updated users array to local storage
+localStorage.setItem('users', JSON.stringify(users));
+
+// Clear the form inputs
+userForm.reset();
+
+// Render the user table
+renderUserTable();
+});
+
+// Render the user table
+function renderUserTable() {
+// Clear the table body
+userTableBody.innerHTML = '';
+
+// Get the users from local storage
+const users = JSON.parse(localStorage.getItem('users')) || [];
+
+// Loop through the users and add them to the table
+for (let i = 0; i < users.length; i++) {
+    const user = users[i];
+
+    // Create a new row for the user
+    const row = document.createElement('tr');
+
+    // Add the first name cell
+    const firstNameCell = document.createElement('td');
+    firstNameCell.textContent = user.firstName;
+    row.appendChild(firstNameCell);
+
+    // Add the last name cell
+    const lastNameCell = document.createElement('td');
+    lastNameCell.textContent = user.lastName;
+    row.appendChild(lastNameCell);
+
+    // Add the email cell
+    const emailCell = document.createElement('td');
+    emailCell.textContent = user.email;
+    row.appendChild(emailCell);
+
+    // Add the actions cell
+    const actionsCell = document.createElement('td');
+
+    // Add the delete button
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.classList.add('bg-red-500', 'hover:bg-red-700', 'text-white', 'font-bold', 'py-2', 'px-4', 'rounded', 'mr-2', 'focus:outline-none', 'focus:shadow-outline');
+    deleteBtn.addEventListener('click', () => {
+        // Remove the user from the users array
+        users.splice(i, 1);
+
+        // Save the updated users array to local storage
+        localStorage.setItem('users', JSON.stringify(users));
+
+        // Render the user table
+        renderUserTable();
+    });
+    actionsCell.appendChild(deleteBtn);
+
+    // Add the edit button
+    const editBtn = document.createElement('button');
+    editBtn.textContent = 'Edit';
+    editBtn.classList.add('bg-yellow-500', 'hover:bg-yellow-700', 'text-white', 'font-bold', 'py-2', 'px-4', 'rounded', 'focus:outline-none', 'focus:shadow-outline');
+    editBtn.addEventListener('click', () => {
+        // Set the form values to the user's values
+        document.getElementById('firstName').value = user.firstName;
+        document.getElementById('lastName').value = user.lastName;
+        document.getElementById('email').value = user.email;
+
+        // Remove the user from the users array
+        users.splice(i, 1);
+
+        // Save the updated users array to local storage
+        localStorage.setItem('users', JSON.stringify(users));
+
+        // Render the user table
+        renderUserTable();
+    });
+    actionsCell.appendChild(editBtn);
+
+    row.appendChild(actionsCell);
+
+    // Add the row to the table body
+    userTableBody.appendChild(row);
+}
+}
+
+// Initial render of the user table
+renderUserTable();
+</script>
+</body>
+</html>
